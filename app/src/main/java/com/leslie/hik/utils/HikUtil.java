@@ -16,8 +16,6 @@ import com.hikvision.netsdk.HCNetSDK;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.RealPlayCallBack;
-import com.leslie.hik.Constant;
-
 import org.MediaPlayer.PlayM4.Player;
 
 import java.io.File;
@@ -43,6 +41,8 @@ import java.text.SimpleDateFormat;
 
 public class HikUtil {
     private static final String TAG = "HikUtil";
+    private static final int HIK_MAIN_STREAM_CODE = 0;      //主码流
+    private static final int HIK_BRANCH_STREAM_CODE = 1;      //子码流
     private static NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30 = null;
     private static int m_iStartChan = 0;
     private static int m_iPort = -1;
@@ -172,7 +172,7 @@ public class HikUtil {
 
             NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
             previewInfo.lChannel = m_iStartChan;
-            previewInfo.dwStreamType = Constant.HIK_BRANCH_STREAM_CODE;                                                             //子码流
+            previewInfo.dwStreamType = HIK_BRANCH_STREAM_CODE;                                                             //子码流
             previewInfo.bBlocked = 1;
             // HCNetSDK start preview
             playId = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(logId, previewInfo, fRealDataCallBack);
@@ -436,12 +436,12 @@ public class HikUtil {
                 return null;
             }
             //图片保存数据获取成功了，通知给外面。或者用handler发送出去
-            mPicCapturedListener.onPicDataSaved(picBuf);
+           /* mPicCapturedListener.onPicDataSaved(picBuf);
             Message message = handler.obtainMessage();
             message.obj = picBuf;
             message.what = Constant.VIDEO_FRAME_PIC_DATA_SAVED;
             handler.sendMessage(message);
-            long end = System.currentTimeMillis();
+            long end = System.currentTimeMillis();*/
             return picBuf;
         } catch (Exception err) {
             Log.e(TAG, "error: " + err.toString());
