@@ -10,14 +10,12 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
 import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.RealPlayCallBack;
 import org.MediaPlayer.PlayM4.Player;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -97,8 +95,8 @@ public class HikUtil {
                     return;
                 }
                 Surface surface = holder.getSurface();
-                if (true == surface.isValid()) {
-                    if (false == Player.getInstance().setVideoWindow(m_iPort, 0, holder)) {
+                if (surface.isValid()) {
+                    if (!Player.getInstance().setVideoWindow(m_iPort, 0, holder)) {
                         Log.e(TAG, "播放器设置或销毁显示区域失败!");
                     }
                 }
@@ -115,8 +113,8 @@ public class HikUtil {
                 if (-1 == m_iPort) {
                     return;
                 }
-                if (true == holder.getSurface().isValid()) {
-                    if (false == Player.getInstance().setVideoWindow(m_iPort, 0, null)) {
+                if (holder.getSurface().isValid()) {
+                    if (!Player.getInstance().setVideoWindow(m_iPort, 0, null)) {
                         Log.e(TAG, "播放器设置或销毁显示区域失败!");
                     }
                 }
