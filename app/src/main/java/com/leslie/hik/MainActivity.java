@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
     SurfaceView surfaceView;
     //----------------------------------------------------------------------------------------------
     private static final int PLAY_HIK_STREAM_CODE = 1001;
-    private static final String IP_ADDRESS = "192.168.60.22";
+    private static final String IP_ADDRESS = "192.168.70.222";
     private static final int PORT = 8000;
     private static final String USER_NAME = "admin";
     private static final String PASSWORD = "eyecool2016";

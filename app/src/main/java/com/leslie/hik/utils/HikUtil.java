@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
 public class HikUtil {
     private static final String TAG = "HikUtil";
     private static final int HIK_MAIN_STREAM_CODE = 0;      //主码流
-    private static final int HIK_BRANCH_STREAM_CODE = 1;      //子码流
+    private static final int HIK_SUB_STREAM_CODE = 1;      //子码流
     private static NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30 = null;
     private static int m_iStartChan = 0;
     private static int m_iPort = -1;
@@ -170,7 +170,7 @@ public class HikUtil {
 
             NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
             previewInfo.lChannel = m_iStartChan;
-            previewInfo.dwStreamType = HIK_BRANCH_STREAM_CODE;                                                             //子码流
+            previewInfo.dwStreamType = HIK_MAIN_STREAM_CODE;                                                             //子码流
             previewInfo.bBlocked = 1;
             // HCNetSDK start preview
             playId = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(logId, previewInfo, fRealDataCallBack);

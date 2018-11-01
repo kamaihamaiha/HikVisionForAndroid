@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "com.leslie.hik"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,15 +21,15 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.jakewharton:butterknife:8.5.1'
-    compile 'com.android.support.constraint:constraint-layout:1.1.2'
-    testCompile 'junit:junit:4.12'
-    compile files('libs/AudioEngineSDK.jar')
-    compile files('libs/HCNetSDK.jar')
-    compile files('libs/PlayerSDK.jar')
-    compile 'com.android.support:appcompat-v7:27.0.0'
+    implementation 'com.jakewharton:butterknife:8.5.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    implementation files('libs/AudioEngineSDK.jar')
+    implementation files('libs/HCNetSDK.jar')
+    implementation files('libs/PlayerSDK.jar')
+    implementation 'com.android.support:appcompat-v7:27.0.0'
 }
