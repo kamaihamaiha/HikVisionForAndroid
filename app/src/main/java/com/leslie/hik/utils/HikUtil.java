@@ -10,12 +10,15 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
 import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.RealPlayCallBack;
+
 import org.MediaPlayer.PlayM4.Player;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -29,34 +32,35 @@ import java.text.SimpleDateFormat;
  * 3->添加网络权限
  * 目前只处理海康摄像头(室内枪型网络摄像机-【型号：DS-2CD5026EFWD】-【软件版本：V5.4.5_170222】)
  * 但是该例子不仅限于这种型号的。
- * 使用方法：
+ * 使用方法[由于要预览 2 路，所以很多静态方法，静态变量去掉了，调用流程也变化了]：
  * 1.HikUtil.initSDK();
- * 2.HikUtil.initView(surfaceView);
- * 3.HikUtil.setDeviceData("192.168.1.22",8000,"admin","eyecool2016");
- * 4.HikUtil.loginDevice(mHandler,LOGIN_SUCCESS_CODE);
- * 5.HikUtil.playOrStopStream();
+ * 2.HikUtil hikUtil = new HikUtil();
+ * 2.hikUtil.initView(surfaceView);
+ * 3.hikUtil.setDeviceData("192.168.1.22",8000,"admin","eyecool2016");
+ * 4.hikUtil.loginDevice(mHandler,LOGIN_SUCCESS_CODE);
+ * 5.hikUtil.playOrStopStream();
  */
 
 public class HikUtil {
     private static final String TAG = "HikUtil";
     private static final int HIK_MAIN_STREAM_CODE = 0;      //主码流
     private static final int HIK_SUB_STREAM_CODE = 1;      //子码流
-    private static NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30 = null;
-    private static int m_iStartChan = 0;
-    private static int m_iPort = -1;
-    private static int m_iPlaybackID = -1;
-    private static int logId = -1;
-    private static int playId = -1;
-    private static SurfaceView mSurfaceView;
-    public static String mIpAddress;
-    private static int mPort;
-    private static String mUserName;
-    private static String mPassWord;
-    public static onPicCapturedListener mPicCapturedListener;
-    private static SimpleDateFormat sDateFormat;
-    private static Player.MPInteger stWidth;
-    private static Player.MPInteger stHeight;
-    private static Player.MPInteger stSize;
+    private NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30 = null;
+    private  int m_iStartChan = 0;
+    private  int m_iPort = -1;
+    private  int m_iPlaybackID = -1;
+    private  int logId = -1;
+    private  int playId = -1;
+    private SurfaceView mSurfaceView;
+    public String mIpAddress;
+    private  int mPort;
+    private String mUserName;
+    private String mPassWord;
+    public  onPicCapturedListener mPicCapturedListener;
+    private SimpleDateFormat sDateFormat;
+    private  Player.MPInteger stWidth;
+    private  Player.MPInteger stHeight;
+    private  Player.MPInteger stSize;
 
     /**
      * 定义接口，用于监听图片截图成功
@@ -67,6 +71,8 @@ public class HikUtil {
         void onPicDataSaved(byte[] picData);
     }
 
+    public HikUtil() {
+    }
 
     /**
      * 初始化HCNet SDK
@@ -84,7 +90,7 @@ public class HikUtil {
         return true;
     }
 
-    public static void initView(SurfaceView surfaceView) {
+    public  void initView(SurfaceView surfaceView) {
         mSurfaceView = surfaceView;
         mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -129,7 +135,7 @@ public class HikUtil {
      * @param userName 用户名
      * @param passWord 密码
      */
-    public static void setDeviceData(String ipAddress, int port, String userName, String passWord) {
+    public  void setDeviceData(String ipAddress, int port, String userName, String passWord) {
         mIpAddress = ipAddress;
         mPort = port;
         mUserName = userName;
@@ -137,7 +143,7 @@ public class HikUtil {
 
     }
 
-    public static void loginDevice(final Handler handler, final int resultCode) {
+    public  void loginDevice(final Handler handler, final int resultCode) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -153,7 +159,7 @@ public class HikUtil {
     /**
      * 播放或者停止播放视频流
      */
-    public static void playOrStopStream() {
+    public  void playOrStopStream() {
 
         if (logId < 0) {
             Log.e(TAG, "请先登录设备");
@@ -170,7 +176,7 @@ public class HikUtil {
 
             NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
             previewInfo.lChannel = m_iStartChan;
-            previewInfo.dwStreamType = HIK_MAIN_STREAM_CODE;                                                             //子码流
+            previewInfo.dwStreamType = HIK_SUB_STREAM_CODE;                                                             //子码流
             previewInfo.bBlocked = 1;
             // HCNetSDK start preview
             playId = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(logId, previewInfo, fRealDataCallBack);
@@ -217,7 +223,7 @@ public class HikUtil {
 
     }
 
-    private static RealPlayCallBack getRealPlayerCbf() {
+    private RealPlayCallBack getRealPlayerCbf() {
         RealPlayCallBack cbf = new RealPlayCallBack() {
             public void fRealDataCallBack(int iRealHandle, int iDataType, byte[] pDataBuffer, int iDataSize) {
                 // 播放通道1
@@ -227,7 +233,7 @@ public class HikUtil {
         return cbf;
     }
 
-    public static void processRealData(int iPlayViewNo, int iDataType, byte[] pDataBuffer, int iDataSize, int iStreamMode) {
+    public  void processRealData(int iPlayViewNo, int iDataType, byte[] pDataBuffer, int iDataSize, int iStreamMode) {
         if (HCNetSDK.NET_DVR_SYSHEAD == iDataType) {
             if (m_iPort >= 0) {
                 return;
@@ -281,7 +287,7 @@ public class HikUtil {
     }
 
 
-    private static boolean login(String ipAddress, int portNum, String userName, String passWord) {
+    private  boolean login(String ipAddress, int portNum, String userName, String passWord) {
         try {
             if (logId < 0) {
                 // 登录设备
@@ -321,7 +327,7 @@ public class HikUtil {
         }
     }
 
-    private static int loginDevice(String ipAddress, int portNum, String userName, String passWord) {
+    private  int loginDevice(String ipAddress, int portNum, String userName, String passWord) {
         //实例化设备信息对象
         m_oNetDvrDeviceInfoV30 = new NET_DVR_DEVICEINFO_V30();
         if (null == m_oNetDvrDeviceInfoV30) {
@@ -344,7 +350,7 @@ public class HikUtil {
         return iLogID;
     }
 
-    private static ExceptionCallBack getExceptiongCbf() {
+    private ExceptionCallBack getExceptiongCbf() {
         ExceptionCallBack oExceptionCbf = new ExceptionCallBack() {
             public void fExceptionCallBack(int iType, int iUserID, int iHandle) {
                 System.out.println("recv exception------------------------------, type:" + iType);
@@ -360,7 +366,7 @@ public class HikUtil {
      * 获取截图数据后保存到磁盘耗时 ≈25ms
      * 从获取截图数-保存到磁盘-解码文件到 bitmap 耗时 ≈45ms
      */
-    public static Bitmap captureFrame(onPicCapturedListener picCapturedListener) {
+    public Bitmap captureFrame(onPicCapturedListener picCapturedListener) {
         try {
             long time1 = System.currentTimeMillis();
             mPicCapturedListener = picCapturedListener;
@@ -408,7 +414,7 @@ public class HikUtil {
      * 截取一帧图片,成功返回bitmap对象，失败返回null
      * 图片数据存放在内存中
      */
-    public static byte[] captureFrameOnMemroy(onPicCapturedListener picCapturedListener, Handler handler) {
+    public  byte[] captureFrameOnMemroy(onPicCapturedListener picCapturedListener, Handler handler) {
         try {
             long start = System.currentTimeMillis();
             mPicCapturedListener = picCapturedListener;
